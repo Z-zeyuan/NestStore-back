@@ -9,3 +9,11 @@ services:
     environment:
       POSTGRES_USER : ZZY
       POSTGRES_PASSWORD : pass123
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    
+  

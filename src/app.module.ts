@@ -1,25 +1,37 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CoffeesModule } from './coffees/coffees.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Coffee } from './coffees/entities/coffee.entity';
 import { User } from './users/entities/user.entity';
 import { IamModule } from './iam/iam.module';
+import { ConfigModule } from '@nestjs/config';
+
+import { OrderModule } from './order/order.module';
+import { MerchandiseClassModule } from './merchandise_class/merchandise_class.module';
+import { MerchandiseModule } from './merchandise/merchandise.module';
+import { RouterDbModule } from './router-db/router-db.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [CoffeesModule, UsersModule, 
+  imports: [ UsersModule, 
     TypeOrmModule.forRootAsync({useFactory: () => ({
     type : 'postgres' , 
-    host : process.env.DATABASE_HOST,
-    port : +process.env.DATABASE_PORT,
-    username : process.env.DATABASE_USER,
-    password : process.env.DATABASE_PASSWORD,
-    database : process.env.DATABASE_NAME,
+    host : 'localhost',
+    port : 5432,
+    username : 'postgres',
+    password : 'pass123',
+    database : 'postgres',
     autoLoadEntities : true,
     synchronize : true
-  })}), IamModule,
+  })}), IamModule,ConfigModule.forRoot(), MerchandiseModule, OrderModule, MerchandiseClassModule, RouterDbModule,
+  ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', 'uploads'),
+    exclude: ['/api*'],
+    
+  },
+  ),
   ],
   controllers: [AppController],
   providers: [AppService],
